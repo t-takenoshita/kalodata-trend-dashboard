@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="TikTok Shop Japanの商品トレンドを探索する分析ダッシュボード" />
-    <title>Kalo Trend Lens</title>
+    <title>TrendScope | Product Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./app-v3.css" />
+    <link rel="stylesheet" href="./identity-v4.css" />
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   </head>
   <body>
@@ -16,19 +17,19 @@
       <header class="topbar">
         <a class="brand" href="#" aria-label="Kalo Trend Lens ホーム">
           <span class="brand-mark">K</span>
-          <span><strong>Kalo Lens</strong><small>PRODUCT INTELLIGENCE</small></span>
+          <span><strong>TrendScope</strong><small>PRODUCT INTELLIGENCE</small></span>
         </a>
         <nav class="topnav" aria-label="メインメニュー">
-          <a href="#">探索</a><a href="#">カテゴリー⌄</a><a href="#">ブランド＆ショップ⌄</a><a href="#">クリエイター</a><a class="active" href="#products">商品</a><a href="#">動画＆広告</a><a href="#">ライブ</a>
+          <a href="#">Overview</a><a class="active" href="#products">Product Radar</a><a href="#">Categories</a><a href="#">Channels</a><a href="#">Watchlist</a>
         </nav>
         <div class="status" id="dataStatus"><span></span> READY</div><div class="avatar">K</div>
       </header>
 
       <main>
         <aside class="filter-sidebar">
-          <div class="filter-title"><strong>マイカスタムフィルター</strong><button id="toggleFilters" aria-label="フィルターを開閉">◧</button></div>
+          <div class="filter-title"><strong>DISCOVERY FILTERS</strong><button id="toggleFilters" aria-label="フィルターを開閉">◧</button></div>
           <div class="filter-content" id="filterContent">
-            <div class="quick-filter">☆ 新商品ランキング</div><div class="quick-filter">♧ 注目アフィリエイト商品</div>
+            <div class="quick-filter">↗ Momentum leaders</div><div class="quick-filter">✦ Emerging products</div>
             <section><p class="filter-label">▣ 期間</p><div class="period-badge">過去30日間</div></section>
             <section><p class="filter-label">▦ カテゴリー</p><p class="filter-hint">上部のカテゴリー選択と連動</p></section>
             <section>
@@ -115,8 +116,8 @@
         </section>
       </main>
 
-      <footer><span>Kalo Trend Lens</span><span>Internal product intelligence</span></footer>
+      <footer><span>TrendScope</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-5"></script>
+    <script type="module" src="./src/app.js?v=20260804-6"></script>
   </body>
 </html>

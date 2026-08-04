@@ -36,7 +36,7 @@ function productVisual(item) {
 function channelVisual(item) {
   const values=[item.cardGmv||0,item.videoGmv||0,item.liveGmv||0]; const max=Math.max(...values,1);
   const y=values.map(value=>52-(value/max)*40); const points=`2,52 22,${y[0]} 56,${y[1]} 88,${y[2]} 112,48`;
-  return `<svg viewBox="0 0 114 56" preserveAspectRatio="none" aria-label="商品カード・動画・ライブ売上の構成"><defs><linearGradient id="trend-${escapeHtml(item.id)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#159cf4" stop-opacity=".18"/><stop offset="1" stop-color="#159cf4" stop-opacity="0"/></linearGradient></defs><polygon points="2,54 ${points} 112,54" fill="url(#trend-${escapeHtml(item.id)})"/><polyline points="${points}" fill="none" stroke="#159cf4" stroke-width="2.2" vector-effect="non-scaling-stroke"/></svg>`;
+  return `<svg viewBox="0 0 114 56" preserveAspectRatio="none" aria-label="商品カード・動画・ライブ売上の構成"><defs><linearGradient id="trend-${escapeHtml(item.id)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#75c84b" stop-opacity=".24"/><stop offset="1" stop-color="#75c84b" stop-opacity="0"/></linearGradient></defs><polygon points="2,54 ${points} 112,54" fill="url(#trend-${escapeHtml(item.id)})"/><polyline points="${points}" fill="none" stroke="#75c84b" stroke-width="2.4" vector-effect="non-scaling-stroke"/></svg>`;
 }
 
 function render() {
