@@ -1,0 +1,6 @@
+.controls { grid-template-columns: minmax(230px, 1.7fr) 1fr 1fr auto auto; }
+.import-btn { background:#edf4ee; border-color:#d5e4d7 !important; justify-content:center; min-width:105px; cursor:pointer; color:var(--dark); font-weight:700; font-size:12px; align-items:center; flex-direction:row !important; }
+.import-btn span { font-size:15px !important; color:var(--dark) !important; }
+.product-icon:is(img) { object-fit:cover; background:#edf2ed; }
+@media(max-width:850px) { .controls { grid-template-columns:1fr 1fr; } .import-btn,.export-btn { min-height:48px; } }
+@media(max-width:520px) { .controls { grid-template-columns:1fr; } }

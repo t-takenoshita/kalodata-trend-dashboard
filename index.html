@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TikTok Shop Japanの商品トレンドを探索する分析ダッシュボード" />
+    <title>Kalo Trend Lens</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./extensions.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Kalo Trend Lens ホーム">
+          <span class="brand-mark">K</span>
+          <span><strong>Kalo Trend</strong><small>Japan Lens</small></span>
+        </a>
+        <nav class="topnav" aria-label="メインメニュー">
+          <a class="active" href="#products">商品</a>
+          <a href="#insights">インサイト</a>
+          <a href="#about">このサイトについて</a>
+        </nav>
+        <div class="status" id="dataStatus"><span></span> READY</div>
+      </header>
+
+      <main>
+        <section class="hero" id="products">
+          <div>
+            <p class="eyebrow">TIKTOK SHOP · JAPAN</p>
+            <h1>売れている「今」を、<br /><em>見逃さない。</em></h1>
+            <p class="hero-copy">商品の勢い、成長率、競争環境をひとつの画面で。次のヒット候補をすばやく見つけるためのトレンドレンズ。</p>
+          </div>
+          <div class="hero-orbit" aria-hidden="true">
+            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+            <div class="signal"><b>+128%</b><small>TOP GROWTH</small></div>
+          </div>
+        </section>
+
+        <section class="controls" aria-label="商品フィルター">
+          <label class="searchbox">
+            <span>⌕</span>
+            <input id="search" type="search" placeholder="商品名・ショップ名で検索" autocomplete="off" />
+          </label>
+          <label>
+            <span>カテゴリー</span>
+            <select id="category"><option value="all">すべて</option></select>
+          </label>
+          <label>
+            <span>並び順</span>
+            <select id="sort">
+              <option value="score">トレンドスコア</option>
+              <option value="growth">成長率</option>
+              <option value="sales">推定販売数</option>
+              <option value="gmv">推定GMV</option>
+            </select>
+          </label>
+          <label class="import-btn" for="csvInput">CSV読込 <span>＋</span></label>
+          <input id="csvInput" type="file" accept=".csv,text/csv" hidden />
+          <button class="export-btn" id="export">CSV出力 <span>↗</span></button>
+        </section>
+
+        <section class="metrics" id="insights" aria-label="主要指標">
+          <article><p>分析商品</p><strong id="metricProducts">—</strong><small>現在の絞り込み</small></article>
+          <article><p>推定GMV</p><strong id="metricGmv">—</strong><small>上位商品の合計</small></article>
+          <article><p>平均成長率</p><strong id="metricGrowth">—</strong><small>直近30日</small></article>
+          <article class="chart-card"><p>トレンド推移</p><div id="sparkline" class="sparkline" aria-label="トレンド推移グラフ"></div></article>
+        </section>
+
+        <section class="ranking-section">
+          <div class="section-heading">
+            <div><p class="eyebrow">TREND RANKING</p><h2>急上昇プロダクト</h2></div>
+            <p id="resultCount"></p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>順位</th><th>商品</th><th>カテゴリー</th><th>価格</th><th>販売数</th><th>取引金額</th><th>売上成長率</th><th>スコア</th></tr></thead>
+              <tbody id="productRows"></tbody>
+            </table>
+          </div>
+          <div id="empty" class="empty" hidden>条件に一致する商品がありません。</div>
+        </section>
+
+        <section class="about" id="about">
+          <p class="eyebrow">DATA WORKFLOW</p>
+          <h2>CSVから始めて、<br />APIへスムーズに拡張。</h2>
+          <p>「CSV読込」から商品データを選ぶと、ランキングと集計をすぐに更新できます。データ処理はブラウザ内で完結し、将来は同じ画面へAPIを接続できます。</p>
+        </section>
+      </main>
+
+      <footer><span>Kalo Trend Lens</span><span>Internal product intelligence</span></footer>
+    </div>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
