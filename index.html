@@ -28,6 +28,24 @@
       </header>
 
       <main>
+        <aside class="filter-sidebar">
+          <div class="filter-title"><strong>フィルター</strong><button id="toggleFilters" aria-label="フィルターを開閉">☰</button></div>
+          <div class="filter-content" id="filterContent">
+            <section><p class="filter-label">期間</p><div class="period-badge">過去30日間</div></section>
+            <section><p class="filter-label">カテゴリー</p><p class="filter-hint">上部のカテゴリー選択と連動</p></section>
+            <section>
+              <p class="filter-label">売上金額フィルター</p>
+              <label class="side-field"><span>最低取引金額（円）</span><input id="minGmv" type="number" min="0" step="1000" placeholder="指定なし"></label>
+              <label class="side-field"><span>最低販売件数</span><input id="minSales" type="number" min="0" step="1" placeholder="指定なし"></label>
+              <label class="side-field"><span>最低成長率（%）</span><input id="minGrowth" type="number" step="1" placeholder="指定なし"></label>
+            </section>
+            <section>
+              <p class="filter-label">価格帯</p>
+              <div class="price-range"><input id="minPrice" type="number" min="0" placeholder="下限"><span>–</span><input id="maxPrice" type="number" min="0" placeholder="上限"></div>
+            </section>
+            <div class="filter-actions"><button id="resetFilters">リセット</button><button id="applyFilters">絞り込み</button></div>
+          </div>
+        </aside>
         <section class="hero" id="products">
           <div>
             <p class="eyebrow">TIKTOK SHOP · JAPAN</p>
@@ -77,7 +95,7 @@
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>順位</th><th>商品</th><th>カテゴリー</th><th>価格</th><th>販売数</th><th>取引金額</th><th>売上成長率</th><th>スコア</th></tr></thead>
+              <thead><tr><th>順位</th><th>商品情報</th><th>カテゴリー</th><th>取引金額</th><th>売上成長率</th><th>販売件数</th><th>商品評価</th><th>平均販売価格</th><th>送料</th><th>スコア</th></tr></thead>
               <tbody id="productRows"></tbody>
             </table>
           </div>
@@ -101,6 +119,6 @@
 
       <footer><span>Kalo Trend Lens</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-3"></script>
+    <script type="module" src="./src/app.js?v=20260804-4"></script>
   </body>
 </html>

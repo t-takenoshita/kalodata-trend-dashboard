@@ -26,6 +26,7 @@ export function adaptKalodataRows(rows) {
       name: row["商品名称"] || "名称未設定", subtitle: row["アップロード時間"] ? `登録 ${row["アップロード時間"]}` : "KaloData商品",
       category: fullCategory.split(">")[0].trim(), fullCategory, imageUrl: row["画像リンク"] || "",
       price: asNumber(row["価格(¥)"]), shipping: asNumber(row["送料(¥)"]), sales: asNumber(row["販売数"]), gmv: asNumber(row["取引金額 (¥)"]),
+      rating: asNumber(row["商品レビュー"]),
       growth: growthValue(growthLabel), growthLabel, liveGmv: asNumber(row["ライブ取引金額 (¥)"]), videoGmv: asNumber(row["動画取引金額 (¥)"]), cardGmv: asNumber(row["商品カード売上"]),
       creators: asNumber(row["クリエイター数"]), detailUrl: row["Kalodata詳細リンク"] || "", tiktokUrl: row["TikTokリンク"] || "",
       icon: "↗", color: ["#dff7e8","#e5f1ff","#ffe6e4","#f0e8ff","#fff0d8"][index % 5],

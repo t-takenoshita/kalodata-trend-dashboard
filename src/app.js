@@ -8,7 +8,7 @@ let pageSize = 10;
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
-const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),sort:document.querySelector("#sort"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump")};
+const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),sort:document.querySelector("#sort"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump"),minGmv:document.querySelector("#minGmv"),minSales:document.querySelector("#minSales"),minGrowth:document.querySelector("#minGrowth"),minPrice:document.querySelector("#minPrice"),maxPrice:document.querySelector("#maxPrice")};
 if (elements.input) elements.input.accept = ".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel";
 
 function populateCategories() {
@@ -20,7 +20,12 @@ function populateCategories() {
 
 function currentData() {
   const query = elements.search.value.trim().toLowerCase();
-  return products.filter(item => (elements.category.value === "all" || item.category === elements.category.value) && (!query || `${item.name} ${item.fullCategory}`.toLowerCase().includes(query))).sort((a,b) => b[elements.sort.value] - a[elements.sort.value]);
+  const floor = input => Number(input.value) || 0;
+  const maxPrice = Number(elements.maxPrice.value) || Infinity;
+  return products.filter(item => (elements.category.value === "all" || item.category === elements.category.value)
+    && (!query || `${item.name} ${item.fullCategory}`.toLowerCase().includes(query))
+    && item.gmv >= floor(elements.minGmv) && item.sales >= floor(elements.minSales) && item.growth >= floor(elements.minGrowth)
+    && item.price >= floor(elements.minPrice) && item.price <= maxPrice).sort((a,b) => b[elements.sort.value] - a[elements.sort.value]);
 }
 
 function productVisual(item) {
@@ -32,7 +37,7 @@ function render() {
   const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
   currentPage = Math.min(currentPage, totalPages);
   const pageRows = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  elements.rows.innerHTML = pageRows.map((item,index) => { const rank=(currentPage-1)*pageSize+index+1; return `<tr><td class="rank ${rank<=3?"top":""}">${String(rank).padStart(2,"0")}</td><td><div class="product-cell">${productVisual(item)}<span><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.subtitle)}</small></span></div></td><td><span class="category-pill">${escapeHtml(item.category)}</span></td><td>${yen(item.price)}</td><td>${num(item.sales)}</td><td><strong>${yen(item.gmv)}</strong></td><td class="growth ${item.growth<0?"down":""}">${escapeHtml(item.growthLabel)}</td><td><span class="score"><b>${item.score}</b><i style="--score:${item.score}%"></i></span></td></tr>`; }).join("");
+  elements.rows.innerHTML = pageRows.map((item,index) => { const rank=(currentPage-1)*pageSize+index+1; return `<tr><td class="rank ${rank<=3?"top":""}">${String(rank).padStart(2,"0")}</td><td><div class="product-cell">${productVisual(item)}<span><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.subtitle)}</small></span></div></td><td><span class="category-pill">${escapeHtml(item.category)}</span></td><td><strong>${yen(item.gmv)}</strong></td><td class="growth ${item.growth<0?"down":""}">${escapeHtml(item.growthLabel)}</td><td>${num(item.sales)}</td><td><span class="rating">★ ${Number(item.rating||0).toFixed(1)}</span></td><td>${yen(item.price)}</td><td>${yen(item.shipping||0)}</td><td><span class="score"><b>${item.score}</b><i style="--score:${item.score}%"></i></span></td></tr>`; }).join("");
   elements.rows.querySelectorAll("img.product-icon").forEach(image => image.addEventListener("error", () => {
     const fallback = document.createElement("span"); fallback.className = "product-icon"; fallback.textContent = "↗"; fallback.style.setProperty("--icon-bg", "#edf2ed"); image.replaceWith(fallback);
   }, { once:true }));
@@ -80,4 +85,7 @@ elements.next?.addEventListener("click",()=>{const pages=Math.max(1,Math.ceil(cu
 elements.pageNumbers?.addEventListener("click",event=>{const page=Number(event.target.closest("button")?.dataset.page);if(page){currentPage=page;render();}});
 elements.pageSize?.addEventListener("change",event=>{pageSize=Number(event.target.value);currentPage=1;render();});
 elements.pageJump?.addEventListener("change",event=>{const pages=Math.max(1,Math.ceil(currentData().length/pageSize));currentPage=Math.min(pages,Math.max(1,Number(event.target.value)||1));render();});
+document.querySelector("#applyFilters")?.addEventListener("click",()=>{currentPage=1;render();});
+document.querySelector("#resetFilters")?.addEventListener("click",()=>{[elements.minGmv,elements.minSales,elements.minGrowth,elements.minPrice,elements.maxPrice].forEach(input=>input.value="");currentPage=1;render();});
+document.querySelector("#toggleFilters")?.addEventListener("click",()=>document.querySelector("#filterContent")?.classList.toggle("open"));
 populateCategories(); render();
