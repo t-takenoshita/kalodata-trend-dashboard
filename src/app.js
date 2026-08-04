@@ -11,7 +11,7 @@ const favorites = new Set(JSON.parse(localStorage.getItem("kalo-lens-favorites")
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
-const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump"),minGmv:document.querySelector("#minGmv"),minSales:document.querySelector("#minSales"),minGrowth:document.querySelector("#minGrowth"),minPrice:document.querySelector("#minPrice"),maxPrice:document.querySelector("#maxPrice")};
+const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),selectedCategory:document.querySelector("#selectedCategory"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump"),minGmv:document.querySelector("#minGmv"),minSales:document.querySelector("#minSales"),minGrowth:document.querySelector("#minGrowth"),minPrice:document.querySelector("#minPrice"),maxPrice:document.querySelector("#maxPrice")};
 if (elements.input) elements.input.accept = ".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel";
 
 function populateCategories() {
@@ -46,6 +46,7 @@ function channelVisual(item) {
 }
 
 function render() {
+  if (elements.selectedCategory) elements.selectedCategory.textContent = elements.category.value === "all" ? "すべてのカテゴリー" : elements.category.selectedOptions[0]?.textContent || elements.category.value;
   const data = currentData();
   const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
   currentPage = Math.min(currentPage, totalPages);

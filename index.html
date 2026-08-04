@@ -33,7 +33,7 @@
           <div class="filter-title"><strong>DISCOVERY FILTERS</strong><button id="toggleFilters" aria-label="フィルターを開閉" aria-expanded="true">◧</button></div>
           <div class="filter-content" id="filterContent">
             <section class="period-section"><p class="filter-label">▣ 期間</p><label class="period-picker"><select id="periodSelect" aria-label="集計期間"><option value="yesterday">昨日</option><option value="7">過去7日間</option><option value="30" selected>過去30日間</option><option value="custom">カスタマイズ</option></select><span>⌄</span></label><div class="custom-period" id="customPeriod" hidden><input id="periodStart" type="date" aria-label="開始日"><span>–</span><input id="periodEnd" type="date" aria-label="終了日"></div><p class="period-note">選択期間で出力したExcelを読み込んでください</p></section>
-            <section><p class="filter-label">▦ カテゴリー</p><p class="filter-hint">上部のカテゴリー選択と連動</p></section>
+            <section><p class="filter-label">▦ カテゴリー</p><p class="selected-category" id="selectedCategory">すべて</p></section>
             <section>
               <p class="filter-label">売上金額フィルター</p>
               <label class="side-field"><span>最低取引金額（円）</span><input id="minGmv" type="number" min="0" step="1000" placeholder="指定なし"></label>
@@ -122,6 +122,6 @@
 
       <footer><span>TrendScope</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-11"></script>
+    <script type="module" src="./src/app.js?v=20260804-12"></script>
   </body>
 </html>
