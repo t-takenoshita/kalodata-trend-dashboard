@@ -5,6 +5,7 @@ import { sampleProducts } from "./sample-data.js";
 let products = sampleProducts;
 let currentPage = 1;
 let pageSize = 10;
+const favorites = new Set(JSON.parse(localStorage.getItem("kalo-lens-favorites") || "[]"));
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
@@ -32,12 +33,18 @@ function productVisual(item) {
   return item.imageUrl ? `<img class="product-icon" src="${escapeHtml(item.imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<span class="product-icon" style="--icon-bg:${item.color}">${item.icon}</span>`;
 }
 
+function channelVisual(item) {
+  const values=[item.cardGmv||0,item.videoGmv||0,item.liveGmv||0]; const max=Math.max(...values,1);
+  const y=values.map(value=>52-(value/max)*40); const points=`2,52 22,${y[0]} 56,${y[1]} 88,${y[2]} 112,48`;
+  return `<svg viewBox="0 0 114 56" preserveAspectRatio="none" aria-label="商品カード・動画・ライブ売上の構成"><defs><linearGradient id="trend-${escapeHtml(item.id)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#159cf4" stop-opacity=".18"/><stop offset="1" stop-color="#159cf4" stop-opacity="0"/></linearGradient></defs><polygon points="2,54 ${points} 112,54" fill="url(#trend-${escapeHtml(item.id)})"/><polyline points="${points}" fill="none" stroke="#159cf4" stroke-width="2.2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
 function render() {
   const data = currentData();
   const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
   currentPage = Math.min(currentPage, totalPages);
   const pageRows = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  elements.rows.innerHTML = pageRows.map((item,index) => { const rank=(currentPage-1)*pageSize+index+1; return `<tr><td class="rank ${rank<=3?"top":""}">${String(rank).padStart(2,"0")}</td><td><div class="product-cell">${productVisual(item)}<span><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.subtitle)}</small></span></div></td><td><span class="category-pill">${escapeHtml(item.category)}</span></td><td><strong>${yen(item.gmv)}</strong></td><td class="growth ${item.growth<0?"down":""}">${escapeHtml(item.growthLabel)}</td><td>${num(item.sales)}</td><td><span class="rating">★ ${Number(item.rating||0).toFixed(1)}</span></td><td>${yen(item.price)}</td><td>${yen(item.shipping||0)}</td><td><span class="score"><b>${item.score}</b><i style="--score:${item.score}%"></i></span></td></tr>`; }).join("");
+  elements.rows.innerHTML = pageRows.map((item,index) => { const rank=(currentPage-1)*pageSize+index+1; const favorite=favorites.has(item.id); return `<tr><td class="rank">${rank}</td><td><div class="product-cell">${productVisual(item)}<span><strong title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</strong><small>${yen(item.price)}</small></span></div></td><td><strong>${yen(item.gmv)}</strong></td><td class="channel-cell">${channelVisual(item)}</td><td class="growth ${item.growth<0?"down":""}">${escapeHtml(item.growthLabel)}</td><td>${num(item.sales)}</td><td><span class="rating">★ ${Number(item.rating||0).toFixed(1)}</span></td><td>${yen(item.price)}</td><td>${yen(item.shipping||0)}</td><td><button class="favorite ${favorite?"active":""}" data-favorite="${escapeHtml(item.id)}" aria-label="お気に入り">${favorite?"★":"☆"}</button></td></tr>`; }).join("");
   elements.rows.querySelectorAll("img.product-icon").forEach(image => image.addEventListener("error", () => {
     const fallback = document.createElement("span"); fallback.className = "product-icon"; fallback.textContent = "↗"; fallback.style.setProperty("--icon-bg", "#edf2ed"); image.replaceWith(fallback);
   }, { once:true }));
@@ -83,6 +90,7 @@ document.querySelector("#export").addEventListener("click",()=>downloadWorkbook(
 elements.prev?.addEventListener("click",()=>{if(currentPage>1){currentPage--;render();}});
 elements.next?.addEventListener("click",()=>{const pages=Math.max(1,Math.ceil(currentData().length/pageSize));if(currentPage<pages){currentPage++;render();}});
 elements.pageNumbers?.addEventListener("click",event=>{const page=Number(event.target.closest("button")?.dataset.page);if(page){currentPage=page;render();}});
+elements.rows.addEventListener("click",event=>{const button=event.target.closest("[data-favorite]");if(!button)return;const id=button.dataset.favorite;favorites.has(id)?favorites.delete(id):favorites.add(id);localStorage.setItem("kalo-lens-favorites",JSON.stringify([...favorites]));button.classList.toggle("active",favorites.has(id));button.textContent=favorites.has(id)?"★":"☆";});
 elements.pageSize?.addEventListener("change",event=>{pageSize=Number(event.target.value);currentPage=1;render();});
 elements.pageJump?.addEventListener("change",event=>{const pages=Math.max(1,Math.ceil(currentData().length/pageSize));currentPage=Math.min(pages,Math.max(1,Number(event.target.value)||1));render();});
 document.querySelector("#applyFilters")?.addEventListener("click",()=>{currentPage=1;render();});

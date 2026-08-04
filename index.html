@@ -8,8 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./dashboard-v2.css" />
+    <link rel="stylesheet" href="./app-v3.css" />
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   </head>
   <body>
@@ -17,22 +16,21 @@
       <header class="topbar">
         <a class="brand" href="#" aria-label="Kalo Trend Lens ホーム">
           <span class="brand-mark">K</span>
-          <span><strong>Kalo Trend</strong><small>Japan Lens</small></span>
+          <span><strong>Kalo Lens</strong><small>PRODUCT INTELLIGENCE</small></span>
         </a>
         <nav class="topnav" aria-label="メインメニュー">
-          <a class="active" href="#products">商品</a>
-          <a href="#insights">インサイト</a>
-          <a href="#about">このサイトについて</a>
+          <a href="#">探索</a><a href="#">カテゴリー⌄</a><a href="#">ブランド＆ショップ⌄</a><a href="#">クリエイター</a><a class="active" href="#products">商品</a><a href="#">動画＆広告</a><a href="#">ライブ</a>
         </nav>
-        <div class="status" id="dataStatus"><span></span> READY</div>
+        <div class="status" id="dataStatus"><span></span> READY</div><div class="avatar">K</div>
       </header>
 
       <main>
         <aside class="filter-sidebar">
-          <div class="filter-title"><strong>フィルター</strong><button id="toggleFilters" aria-label="フィルターを開閉">☰</button></div>
+          <div class="filter-title"><strong>マイカスタムフィルター</strong><button id="toggleFilters" aria-label="フィルターを開閉">◧</button></div>
           <div class="filter-content" id="filterContent">
-            <section><p class="filter-label">期間</p><div class="period-badge">過去30日間</div></section>
-            <section><p class="filter-label">カテゴリー</p><p class="filter-hint">上部のカテゴリー選択と連動</p></section>
+            <div class="quick-filter">☆ 新商品ランキング</div><div class="quick-filter">♧ 注目アフィリエイト商品</div>
+            <section><p class="filter-label">▣ 期間</p><div class="period-badge">過去30日間</div></section>
+            <section><p class="filter-label">▦ カテゴリー</p><p class="filter-hint">上部のカテゴリー選択と連動</p></section>
             <section>
               <p class="filter-label">売上金額フィルター</p>
               <label class="side-field"><span>最低取引金額（円）</span><input id="minGmv" type="number" min="0" step="1000" placeholder="指定なし"></label>
@@ -50,7 +48,7 @@
           <div>
             <p class="eyebrow">TIKTOK SHOP · JAPAN</p>
             <h1>売れている「今」を、<br /><em>見逃さない。</em></h1>
-            <p class="hero-copy">商品の勢い、成長率、競争環境をひとつの画面で。次のヒット候補をすばやく見つけるためのトレンドレンズ。</p>
+            <p class="hero-copy">商品の勢い、成長率、競争環境をひとつの画面で。</p>
           </div>
           <div class="hero-orbit" aria-hidden="true">
             <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
@@ -61,7 +59,7 @@
         <section class="controls" aria-label="商品フィルター">
           <label class="searchbox">
             <span>⌕</span>
-            <input id="search" type="search" placeholder="商品名・ショップ名で検索" autocomplete="off" />
+            <input id="search" type="search" placeholder="商品名またはカテゴリー名を入力" autocomplete="off" />
           </label>
           <label>
             <span>カテゴリー</span>
@@ -90,12 +88,12 @@
 
         <section class="ranking-section">
           <div class="section-heading">
-            <div><p class="eyebrow">TREND RANKING</p><h2>急上昇プロダクト</h2></div>
+            <div><span class="period-chip">期間：過去30日間</span><h2>商品ランキング</h2></div>
             <p id="resultCount"></p>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>順位</th><th>商品情報</th><th>カテゴリー</th><th>取引金額</th><th>売上成長率</th><th>販売件数</th><th>商品評価</th><th>平均販売価格</th><th>送料</th><th>スコア</th></tr></thead>
+              <thead><tr><th>順位</th><th>商品情報</th><th>売上高</th><th class="channel-head">販売チャネル構成</th><th>売上高成長率</th><th>販売件数</th><th>商品評価</th><th>平均販売価格</th><th>送料</th><th>操作</th></tr></thead>
               <tbody id="productRows"></tbody>
             </table>
           </div>
@@ -119,6 +117,6 @@
 
       <footer><span>Kalo Trend Lens</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-4"></script>
+    <script type="module" src="./src/app.js?v=20260804-5"></script>
   </body>
 </html>
