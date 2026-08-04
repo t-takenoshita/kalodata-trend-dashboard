@@ -82,6 +82,14 @@
             </table>
           </div>
           <div id="empty" class="empty" hidden>条件に一致する商品がありません。</div>
+          <nav class="pagination" id="pagination" aria-label="商品一覧のページ送り">
+            <button id="prevPage" class="page-arrow" aria-label="前のページ">‹</button>
+            <div id="pageNumbers" class="page-numbers"></div>
+            <button id="nextPage" class="page-arrow" aria-label="次のページ">›</button>
+            <span class="page-divider"></span>
+            <label class="page-size"><select id="pageSize" aria-label="1ページの表示件数"><option value="10">10 / ページ</option><option value="20">20 / ページ</option><option value="50">50 / ページ</option></select></label>
+            <label class="page-jump"><span>移動</span><input id="pageJump" type="number" min="1" value="1" aria-label="移動先ページ"><span>ページ</span></label>
+          </nav>
         </section>
 
         <section class="about" id="about">
@@ -93,6 +101,6 @@
 
       <footer><span>Kalo Trend Lens</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-2"></script>
+    <script type="module" src="./src/app.js?v=20260804-3"></script>
   </body>
 </html>

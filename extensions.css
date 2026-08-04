@@ -2,5 +2,18 @@
 .import-btn { background:#edf4ee; border-color:#d5e4d7 !important; justify-content:center; min-width:105px; cursor:pointer; color:var(--dark); font-weight:700; font-size:12px; align-items:center; flex-direction:row !important; }
 .import-btn span { font-size:15px !important; color:var(--dark) !important; }
 .product-icon:is(img) { object-fit:cover; background:#edf2ed; }
+.pagination { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:20px; color:var(--muted); }
+.pagination button,.pagination select,.pagination input { height:42px; border:1px solid var(--line); background:white; color:var(--ink); border-radius:10px; font:600 13px inherit; }
+.pagination button { min-width:42px; padding:0 12px; cursor:pointer; }
+.pagination button:hover:not(:disabled),.pagination button.active { border-color:var(--dark); color:var(--dark); }
+.pagination button.active { box-shadow:0 5px 14px #17382118; background:#f9fcf9; }
+.pagination button:disabled { opacity:.35; cursor:not-allowed; }
+.page-numbers { display:flex; align-items:center; gap:6px; }
+.page-ellipsis { min-width:28px; text-align:center; letter-spacing:.1em; }
+.page-divider { width:1px; height:28px; background:var(--line); margin:0 8px; }
+.page-size select { padding:0 34px 0 14px; }
+.page-jump { display:flex; align-items:center; gap:8px; font-size:12px; }
+.page-jump input { width:66px; padding:0 10px; text-align:center; }
 @media(max-width:850px) { .controls { grid-template-columns:1fr 1fr; } .import-btn,.export-btn { min-height:48px; } }
-@media(max-width:520px) { .controls { grid-template-columns:1fr; } }
+@media(max-width:700px) { .pagination { justify-content:center; flex-wrap:wrap; } .page-divider { display:none; } }
+@media(max-width:520px) { .controls { grid-template-columns:1fr; } .page-jump { display:none; } }
