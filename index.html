@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="./identity-v4.css" />
     <link rel="stylesheet" href="./table-readability-v5.css" />
     <link rel="stylesheet" href="./sortable-v6.css" />
+    <link rel="stylesheet" href="./cleanup-v7.css" />
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   </head>
   <body>
@@ -68,15 +69,6 @@
             <span>カテゴリー</span>
             <select id="category"><option value="all">すべて</option></select>
           </label>
-          <label>
-            <span>並び順</span>
-            <select id="sort">
-              <option value="score">トレンドスコア</option>
-              <option value="growth">成長率</option>
-              <option value="sales">推定販売数</option>
-              <option value="gmv">推定GMV</option>
-            </select>
-          </label>
           <label class="import-btn" for="excelInput">Excel読込 <span>＋</span></label>
           <input id="excelInput" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden />
           <button class="export-btn" id="export">Excel出力 <span>↗</span></button>
@@ -131,6 +123,6 @@
 
       <footer><span>TrendScope</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-8"></script>
+    <script type="module" src="./src/app.js?v=20260804-9"></script>
   </body>
 </html>

@@ -11,7 +11,7 @@ const favorites = new Set(JSON.parse(localStorage.getItem("kalo-lens-favorites")
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
-const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),sort:document.querySelector("#sort"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump"),minGmv:document.querySelector("#minGmv"),minSales:document.querySelector("#minSales"),minGrowth:document.querySelector("#minGrowth"),minPrice:document.querySelector("#minPrice"),maxPrice:document.querySelector("#maxPrice")};
+const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump"),minGmv:document.querySelector("#minGmv"),minSales:document.querySelector("#minSales"),minGrowth:document.querySelector("#minGrowth"),minPrice:document.querySelector("#minPrice"),maxPrice:document.querySelector("#maxPrice")};
 if (elements.input) elements.input.accept = ".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel";
 
 function populateCategories() {
@@ -100,7 +100,6 @@ async function importExcel(file) {
 }
 
 [elements.search,elements.category].forEach(element=>element.addEventListener("input",()=>{currentPage=1;render();}));
-elements.sort.addEventListener("change",event=>{sortKey=event.target.value;sortDirection="desc";currentPage=1;render();});
 if (elements.input) elements.input.addEventListener("change",event=>event.target.files[0]&&importExcel(event.target.files[0]));
 document.querySelector("#export").addEventListener("click",()=>downloadWorkbook(currentData()));
 elements.prev?.addEventListener("click",()=>{if(currentPage>1){currentPage--;render();}});

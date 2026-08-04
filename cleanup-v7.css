@@ -1,0 +1,1 @@
+.controls{grid-template-columns:minmax(340px,1fr) 190px auto auto}.controls .searchbox{min-width:0}@media(max-width:1050px){.controls{grid-template-columns:minmax(280px,1fr) 160px auto auto}}@media(max-width:760px){.controls{grid-template-columns:1fr 1fr}.controls .searchbox{grid-column:1/-1}}
