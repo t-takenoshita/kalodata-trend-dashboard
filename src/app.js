@@ -5,6 +5,8 @@ import { sampleProducts } from "./sample-data.js";
 let products = sampleProducts;
 let currentPage = 1;
 let pageSize = 10;
+let sortKey = "score";
+let sortDirection = "desc";
 const favorites = new Set(JSON.parse(localStorage.getItem("kalo-lens-favorites") || "[]"));
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
@@ -26,7 +28,11 @@ function currentData() {
   return products.filter(item => (elements.category.value === "all" || item.category === elements.category.value)
     && (!query || `${item.name} ${item.fullCategory}`.toLowerCase().includes(query))
     && item.gmv >= floor(elements.minGmv) && item.sales >= floor(elements.minSales) && item.growth >= floor(elements.minGrowth)
-    && item.price >= floor(elements.minPrice) && item.price <= maxPrice).sort((a,b) => b[elements.sort.value] - a[elements.sort.value]);
+    && item.price >= floor(elements.minPrice) && item.price <= maxPrice).sort((a,b) => {
+      const direction = sortDirection === "asc" ? 1 : -1;
+      if (sortKey === "name") return direction * a.name.localeCompare(b.name, "ja");
+      return direction * ((Number(a[sortKey]) || 0) - (Number(b[sortKey]) || 0));
+    });
 }
 
 function productVisual(item) {
@@ -54,6 +60,15 @@ function render() {
   const avg = data.length ? Math.round(data.reduce((sum,item)=>sum+item.growth,0)/data.length) : 0; document.querySelector("#metricGrowth").textContent = data.length ? `${avg>=0?"+":""}${avg}%` : "—";
   renderSparkline(data.length ? Math.round(data.reduce((sum,item)=>sum+item.score,0)/data.length) : 0);
   if (elements.pagination) renderPagination(data.length, totalPages);
+  updateSortHeaders();
+}
+
+function updateSortHeaders() {
+  document.querySelectorAll("th[data-sort]").forEach(header => {
+    const active = header.dataset.sort === sortKey; header.classList.toggle("sort-active", active);
+    if (active) { header.dataset.direction = sortDirection; header.setAttribute("aria-sort", sortDirection === "asc" ? "ascending" : "descending"); }
+    else { delete header.dataset.direction; header.removeAttribute("aria-sort"); }
+  });
 }
 
 function paginationItems(totalPages) {
@@ -84,13 +99,15 @@ async function importExcel(file) {
   } catch (error) { window.alert(error.message); }
 }
 
-[elements.search,elements.category,elements.sort].forEach(element=>element.addEventListener("input",()=>{currentPage=1;render();}));
+[elements.search,elements.category].forEach(element=>element.addEventListener("input",()=>{currentPage=1;render();}));
+elements.sort.addEventListener("change",event=>{sortKey=event.target.value;sortDirection="desc";currentPage=1;render();});
 if (elements.input) elements.input.addEventListener("change",event=>event.target.files[0]&&importExcel(event.target.files[0]));
 document.querySelector("#export").addEventListener("click",()=>downloadWorkbook(currentData()));
 elements.prev?.addEventListener("click",()=>{if(currentPage>1){currentPage--;render();}});
 elements.next?.addEventListener("click",()=>{const pages=Math.max(1,Math.ceil(currentData().length/pageSize));if(currentPage<pages){currentPage++;render();}});
 elements.pageNumbers?.addEventListener("click",event=>{const page=Number(event.target.closest("button")?.dataset.page);if(page){currentPage=page;render();}});
 elements.rows.addEventListener("click",event=>{const button=event.target.closest("[data-favorite]");if(!button)return;const id=button.dataset.favorite;favorites.has(id)?favorites.delete(id):favorites.add(id);localStorage.setItem("kalo-lens-favorites",JSON.stringify([...favorites]));button.classList.toggle("active",favorites.has(id));button.textContent=favorites.has(id)?"★":"☆";});
+document.querySelector("thead")?.addEventListener("click",event=>{const header=event.target.closest("th[data-sort]");if(!header)return;const key=header.dataset.sort;if(sortKey===key)sortDirection=sortDirection==="desc"?"asc":"desc";else{sortKey=key;sortDirection="desc";}currentPage=1;render();});
 elements.pageSize?.addEventListener("change",event=>{pageSize=Number(event.target.value);currentPage=1;render();});
 elements.pageJump?.addEventListener("change",event=>{const pages=Math.max(1,Math.ceil(currentData().length/pageSize));currentPage=Math.min(pages,Math.max(1,Number(event.target.value)||1));render();});
 document.querySelector("#applyFilters")?.addEventListener("click",()=>{currentPage=1;render();});
