@@ -6,7 +6,8 @@ let products = sampleProducts;
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
-const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),sort:document.querySelector("#sort"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput"),status:document.querySelector("#dataStatus")};
+const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),sort:document.querySelector("#sort"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus")};
+if (elements.input) elements.input.accept = ".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel";
 
 function populateCategories() {
   const selected = elements.category.value;
@@ -47,11 +48,11 @@ async function importExcel(file) {
     const rows = await readKalodataWorkbook(file); const imported = adaptKalodataRows(rows);
     if (!imported.length || !rows[0]?.["商品名称"]) throw new Error("KaloDataの商品Excelとして認識できませんでした");
     products = imported; elements.search.value = ""; elements.category.value = "all"; populateCategories(); render();
-    elements.status.innerHTML = `<span></span> LOCAL EXCEL · ${products.length} ITEMS`; elements.status.title = `${file.name}（端末内処理）`;
+    if (elements.status) { elements.status.innerHTML = `<span></span> LOCAL EXCEL · ${products.length} ITEMS`; elements.status.title = `${file.name}（端末内処理）`; }
   } catch (error) { window.alert(error.message); }
 }
 
 [elements.search,elements.category,elements.sort].forEach(element=>element.addEventListener("input",render));
-elements.input.addEventListener("change",event=>event.target.files[0]&&importExcel(event.target.files[0]));
+if (elements.input) elements.input.addEventListener("change",event=>event.target.files[0]&&importExcel(event.target.files[0]));
 document.querySelector("#export").addEventListener("click",()=>downloadWorkbook(currentData()));
 populateCategories(); render();
