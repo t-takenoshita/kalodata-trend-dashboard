@@ -71,6 +71,17 @@ function updateSortHeaders() {
   });
 }
 
+const shortDate = date => `${String(date.getMonth()+1).padStart(2,"0")}/${String(date.getDate()).padStart(2,"0")}`;
+function updatePeriod() {
+  const select=document.querySelector("#periodSelect"), custom=document.querySelector("#customPeriod"), chip=document.querySelector("#periodChip"); if(!select||!chip)return;
+  const end=new Date(); end.setDate(end.getDate()-1); let label="";
+  if(select.value==="yesterday") label=`昨日（${shortDate(end)}）`;
+  else if(select.value==="7"){const start=new Date(end);start.setDate(start.getDate()-6);label=`過去7日間（${shortDate(start)}～${shortDate(end)}）`;}
+  else if(select.value==="30"){const start=new Date(end);start.setDate(start.getDate()-29);label=`過去30日間（${shortDate(start)}～${shortDate(end)}）`;}
+  else {const startValue=document.querySelector("#periodStart")?.value,endValue=document.querySelector("#periodEnd")?.value;label=startValue&&endValue?`${startValue.replaceAll("-","/")}～${endValue.replaceAll("-","/")}`:"カスタマイズ";}
+  custom.hidden=select.value!=="custom"; chip.textContent=`期間：${label}`;
+}
+
 function paginationItems(totalPages) {
   if (totalPages <= 7) return Array.from({length:totalPages},(_,index)=>index+1);
   const pages = new Set([1,totalPages,currentPage-1,currentPage,currentPage+1]);
@@ -118,4 +129,6 @@ document.querySelector("#toggleFilters")?.addEventListener("click",event=>{
     const collapsed=document.querySelector("main")?.classList.toggle("filters-collapsed"); event.currentTarget.setAttribute("aria-expanded",String(!collapsed));
   }
 });
-populateCategories(); render();
+document.querySelector("#periodSelect")?.addEventListener("change",updatePeriod);
+document.querySelectorAll("#periodStart,#periodEnd").forEach(input=>input.addEventListener("change",updatePeriod));
+populateCategories(); updatePeriod(); render();
