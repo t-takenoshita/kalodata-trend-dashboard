@@ -1,4 +1,4 @@
-import { parseCsv, toCsv } from "./csv.js";
+import { readKalodataWorkbook, downloadWorkbook } from "./excel.js";
 import { adaptKalodataRows } from "./kalodata-adapter.js";
 import { sampleProducts } from "./sample-data.js";
 
@@ -6,7 +6,7 @@ let products = sampleProducts;
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
-const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),sort:document.querySelector("#sort"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#csvInput"),status:document.querySelector("#dataStatus")};
+const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),sort:document.querySelector("#sort"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput"),status:document.querySelector("#dataStatus")};
 
 function populateCategories() {
   const selected = elements.category.value;
@@ -42,20 +42,16 @@ function renderSparkline(base) {
   document.querySelector("#sparkline").innerHTML=`<svg viewBox="0 0 100 75" preserveAspectRatio="none"><defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#21c16b" stop-opacity=".3"/><stop offset="1" stop-color="#21c16b" stop-opacity="0"/></linearGradient></defs><polygon points="0,75 ${points} 100,75" fill="url(#fill)"/><polyline points="${points}" fill="none" stroke="#21c16b" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
 }
 
-async function importCsv(file) {
+async function importExcel(file) {
   try {
-    const rows = parseCsv(await file.text()); const imported = adaptKalodataRows(rows);
-    if (!imported.length || !rows[0]?.["商品名称"]) throw new Error("KaloDataの商品CSVとして認識できませんでした");
+    const rows = await readKalodataWorkbook(file); const imported = adaptKalodataRows(rows);
+    if (!imported.length || !rows[0]?.["商品名称"]) throw new Error("KaloDataの商品Excelとして認識できませんでした");
     products = imported; elements.search.value = ""; elements.category.value = "all"; populateCategories(); render();
-    elements.status.innerHTML = `<span></span> LOCAL CSV · ${products.length} ITEMS`; elements.status.title = `${file.name}（端末内処理）`;
+    elements.status.innerHTML = `<span></span> LOCAL EXCEL · ${products.length} ITEMS`; elements.status.title = `${file.name}（端末内処理）`;
   } catch (error) { window.alert(error.message); }
 }
 
-function exportCsv() {
-  const url=URL.createObjectURL(new Blob([toCsv(currentData())],{type:"text/csv;charset=utf-8"})); const anchor=document.createElement("a"); anchor.href=url; anchor.download=`kalo-trend-${new Date().toISOString().slice(0,10)}.csv`; anchor.click(); URL.revokeObjectURL(url);
-}
-
 [elements.search,elements.category,elements.sort].forEach(element=>element.addEventListener("input",render));
-elements.input.addEventListener("change",event=>event.target.files[0]&&importCsv(event.target.files[0]));
-document.querySelector("#export").addEventListener("click",exportCsv);
+elements.input.addEventListener("change",event=>event.target.files[0]&&importExcel(event.target.files[0]));
+document.querySelector("#export").addEventListener("click",()=>downloadWorkbook(currentData()));
 populateCategories(); render();

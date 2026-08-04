@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./extensions.css" />
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -57,9 +58,9 @@
               <option value="gmv">推定GMV</option>
             </select>
           </label>
-          <label class="import-btn" for="csvInput">CSV読込 <span>＋</span></label>
-          <input id="csvInput" type="file" accept=".csv,text/csv" hidden />
-          <button class="export-btn" id="export">CSV出力 <span>↗</span></button>
+          <label class="import-btn" for="excelInput">Excel読込 <span>＋</span></label>
+          <input id="excelInput" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden />
+          <button class="export-btn" id="export">Excel出力 <span>↗</span></button>
         </section>
 
         <section class="metrics" id="insights" aria-label="主要指標">
@@ -85,8 +86,8 @@
 
         <section class="about" id="about">
           <p class="eyebrow">DATA WORKFLOW</p>
-          <h2>CSVから始めて、<br />APIへスムーズに拡張。</h2>
-          <p>「CSV読込」から商品データを選ぶと、ランキングと集計をすぐに更新できます。データ処理はブラウザ内で完結し、将来は同じ画面へAPIを接続できます。</p>
+          <h2>Excelから始めて、<br />APIへスムーズに拡張。</h2>
+          <p>「Excel読込」からKaloDataの商品ファイルを選ぶと、ランキングと集計をすぐに更新できます。データ処理はブラウザ内で完結し、将来は同じ画面へAPIを接続できます。</p>
         </section>
       </main>
 
