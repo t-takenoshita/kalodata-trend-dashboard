@@ -111,5 +111,11 @@ elements.pageSize?.addEventListener("change",event=>{pageSize=Number(event.targe
 elements.pageJump?.addEventListener("change",event=>{const pages=Math.max(1,Math.ceil(currentData().length/pageSize));currentPage=Math.min(pages,Math.max(1,Number(event.target.value)||1));render();});
 document.querySelector("#applyFilters")?.addEventListener("click",()=>{currentPage=1;render();});
 document.querySelector("#resetFilters")?.addEventListener("click",()=>{[elements.minGmv,elements.minSales,elements.minGrowth,elements.minPrice,elements.maxPrice].forEach(input=>input.value="");currentPage=1;render();});
-document.querySelector("#toggleFilters")?.addEventListener("click",()=>document.querySelector("#filterContent")?.classList.toggle("open"));
+document.querySelector("#toggleFilters")?.addEventListener("click",event=>{
+  if (window.matchMedia("(max-width: 760px)").matches) {
+    const open=document.querySelector("#filterContent")?.classList.toggle("open"); event.currentTarget.setAttribute("aria-expanded",String(Boolean(open)));
+  } else {
+    const collapsed=document.querySelector("main")?.classList.toggle("filters-collapsed"); event.currentTarget.setAttribute("aria-expanded",String(!collapsed));
+  }
+});
 populateCategories(); render();

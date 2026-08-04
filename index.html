@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./table-readability-v5.css" />
     <link rel="stylesheet" href="./sortable-v6.css" />
     <link rel="stylesheet" href="./cleanup-v7.css" />
+    <link rel="stylesheet" href="./collapse-v8.css" />
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   </head>
   <body>
@@ -30,7 +31,7 @@
 
       <main>
         <aside class="filter-sidebar">
-          <div class="filter-title"><strong>DISCOVERY FILTERS</strong><button id="toggleFilters" aria-label="フィルターを開閉">◧</button></div>
+          <div class="filter-title"><strong>DISCOVERY FILTERS</strong><button id="toggleFilters" aria-label="フィルターを開閉" aria-expanded="true">◧</button></div>
           <div class="filter-content" id="filterContent">
             <div class="quick-filter">↗ Momentum leaders</div><div class="quick-filter">✦ Emerging products</div>
             <section><p class="filter-label">▣ 期間</p><div class="period-badge">過去30日間</div></section>
@@ -123,6 +124,6 @@
 
       <footer><span>TrendScope</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-9"></script>
+    <script type="module" src="./src/app.js?v=20260804-10"></script>
   </body>
 </html>
