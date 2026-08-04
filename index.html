@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./app-v3.css" />
     <link rel="stylesheet" href="./identity-v4.css" />
+    <link rel="stylesheet" href="./table-readability-v5.css" />
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   </head>
   <body>
@@ -94,7 +95,7 @@
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>順位</th><th>商品情報</th><th>売上高</th><th class="channel-head">販売チャネル構成</th><th>売上高成長率</th><th>販売件数</th><th>商品評価</th><th>平均販売価格</th><th>送料</th><th>操作</th></tr></thead>
+              <thead><tr><th>順位</th><th>商品</th><th>売上</th><th class="channel-head">チャネル構成</th><th>成長率</th><th>販売数</th><th>評価</th><th>平均価格</th><th>送料</th><th>保存</th></tr></thead>
               <tbody id="productRows"></tbody>
             </table>
           </div>
@@ -118,6 +119,6 @@
 
       <footer><span>TrendScope</span><span>Internal product intelligence</span></footer>
     </div>
-    <script type="module" src="./src/app.js?v=20260804-6"></script>
+    <script type="module" src="./src/app.js?v=20260804-7"></script>
   </body>
 </html>
