@@ -1,0 +1,37 @@
+name: KaloDataの商品データを更新
+
+on:
+  workflow_dispatch:
+    inputs:
+      custom_date_range:
+        description: "任意期間（yyyy-MM-dd~yyyy-MM-dd、不要なら空欄）"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-kalodata-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: KaloData APIから取得
+        env:
+          KALODATA_SECRET_KEY: ${{ secrets.KALODATA_SECRET_KEY }}
+          CUSTOM_DATE_RANGE: ${{ inputs.custom_date_range }}
+        run: node scripts/fetch-kalodata.mjs
+      - name: 更新結果を保存
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/product-rank-*.json
+          git diff --cached --quiet || git commit -m "Update KaloData product snapshots"
+          git push

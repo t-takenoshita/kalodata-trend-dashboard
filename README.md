@@ -15,7 +15,9 @@ TikTok Shop Japanの商品トレンドを探索する、静的な分析ダッシ
 
 ## KaloData API接続
 
-商品ランキングAPI用のCloudflare Worker中継を`worker/`に用意しています。`worker/README.md`の手順で秘密鍵をWorker Secretへ登録し、デプロイ後のURLを`src/api-config.js`へ設定してください。設定後は初回表示・期間変更・「API更新」でKaloDataから最新データを取得します。
+GitHubのリポジトリで **Settings → Secrets and variables → Actions** を開き、Repository secretとして`KALODATA_SECRET_KEY`を登録します。次に **Actions → KaloDataの商品データを更新 → Run workflow** を実行すると、「昨日・過去7日・過去30日」の商品データが`data/`へ保存されます。任意期間も必要な場合は実行時に`yyyy-MM-dd~yyyy-MM-dd`を入力します。
+
+サイトの期間変更は、最後にActionsで取得した各期間のJSONを切り替えます。APIキーは公開されませんが、取得結果のJSONは公開されます。リアルタイム取得へ戻す場合に備え、Cloudflare Worker版も`worker/`へ残しています。
 
 商品ランキングAPIに含まれない評価・送料は「—」表示です。カテゴリーIDと名称の対応はカテゴリーAPIを追加した後に連動できます。
 

@@ -159,4 +159,4 @@ document.querySelector("#periodSelect")?.addEventListener("change",()=>{updatePe
 document.querySelectorAll("#periodStart,#periodEnd").forEach(input=>input.addEventListener("change",()=>{updatePeriod();if(apiIsConfigured()&&document.querySelector("#periodStart").value&&document.querySelector("#periodEnd").value)refreshFromApi();}));
 elements.apiRefresh?.addEventListener("click",refreshFromApi);
 if(elements.apiRefresh&&!apiIsConfigured()) elements.apiRefresh.hidden=true;
-populateCategories(); updatePeriod(); render(); if(apiIsConfigured()) refreshFromApi();
+populateCategories(); updatePeriod(); render();
