@@ -1,6 +1,7 @@
 import { readKalodataWorkbook, downloadWorkbook } from "./excel.js";
 import { adaptKalodataRows } from "./kalodata-adapter.js";
 import { sampleProducts } from "./sample-data.js";
+import { apiIsConfigured, fetchProductRanking } from "./kalodata-api.js";
 
 let products = sampleProducts;
 let currentPage = 1;
@@ -11,7 +12,7 @@ const favorites = new Set(JSON.parse(localStorage.getItem("kalo-lens-favorites")
 const yen = value => new Intl.NumberFormat("ja-JP",{style:"currency",currency:"JPY",maximumFractionDigits:0}).format(value);
 const num = value => new Intl.NumberFormat("ja-JP").format(value);
 const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
-const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),selectedCategory:document.querySelector("#selectedCategory"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump"),minGmv:document.querySelector("#minGmv"),minSales:document.querySelector("#minSales"),minGrowth:document.querySelector("#minGrowth"),minPrice:document.querySelector("#minPrice"),maxPrice:document.querySelector("#maxPrice")};
+const elements = {search:document.querySelector("#search"),category:document.querySelector("#category"),selectedCategory:document.querySelector("#selectedCategory"),rows:document.querySelector("#productRows"),empty:document.querySelector("#empty"),input:document.querySelector("#excelInput, #csvInput"),apiRefresh:document.querySelector("#apiRefresh"),status:document.querySelector("#dataStatus"),pagination:document.querySelector("#pagination"),pageNumbers:document.querySelector("#pageNumbers"),prev:document.querySelector("#prevPage"),next:document.querySelector("#nextPage"),pageSize:document.querySelector("#pageSize"),pageJump:document.querySelector("#pageJump"),minGmv:document.querySelector("#minGmv"),minSales:document.querySelector("#minSales"),minGrowth:document.querySelector("#minGrowth"),minPrice:document.querySelector("#minPrice"),maxPrice:document.querySelector("#maxPrice")};
 if (elements.input) elements.input.accept = ".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel";
 
 function populateCategories() {
@@ -51,7 +52,7 @@ function render() {
   const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
   currentPage = Math.min(currentPage, totalPages);
   const pageRows = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  elements.rows.innerHTML = pageRows.map((item,index) => { const rank=(currentPage-1)*pageSize+index+1; const favorite=favorites.has(item.id); return `<tr><td class="rank">${rank}</td><td><div class="product-cell">${productVisual(item)}<span><strong title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</strong><small>${yen(item.price)}</small></span></div></td><td><strong>${yen(item.gmv)}</strong></td><td class="channel-cell">${channelVisual(item)}</td><td class="growth ${item.growth<0?"down":""}">${escapeHtml(item.growthLabel)}</td><td>${num(item.sales)}</td><td><span class="rating">★ ${Number(item.rating||0).toFixed(1)}</span></td><td>${yen(item.price)}</td><td>${yen(item.shipping||0)}</td><td><button class="favorite ${favorite?"active":""}" data-favorite="${escapeHtml(item.id)}" aria-label="お気に入り">${favorite?"★":"☆"}</button></td></tr>`; }).join("");
+  elements.rows.innerHTML = pageRows.map((item,index) => { const rank=(currentPage-1)*pageSize+index+1; const favorite=favorites.has(item.id); const rating=item.rating==null?"—":`★ ${Number(item.rating).toFixed(1)}`; const shipping=item.shipping==null?"—":yen(item.shipping); return `<tr><td class="rank">${rank}</td><td><div class="product-cell">${productVisual(item)}<span><strong title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</strong><small>${yen(item.price)}</small></span></div></td><td><strong>${yen(item.gmv)}</strong></td><td class="channel-cell">${channelVisual(item)}</td><td class="growth ${item.growth<0?"down":""}">${escapeHtml(item.growthLabel)}</td><td>${num(item.sales)}</td><td><span class="rating">${rating}</span></td><td>${yen(item.price)}</td><td>${shipping}</td><td><button class="favorite ${favorite?"active":""}" data-favorite="${escapeHtml(item.id)}" aria-label="お気に入り">${favorite?"★":"☆"}</button></td></tr>`; }).join("");
   elements.rows.querySelectorAll("img.product-icon").forEach(image => image.addEventListener("error", () => {
     const fallback = document.createElement("span"); fallback.className = "product-icon"; fallback.textContent = "↗"; fallback.style.setProperty("--icon-bg", "#edf2ed"); image.replaceWith(fallback);
   }, { once:true }));
@@ -81,6 +82,30 @@ function updatePeriod() {
   else if(select.value==="30"){const start=new Date(end);start.setDate(start.getDate()-29);label=`過去30日間（${shortDate(start)}～${shortDate(end)}）`;}
   else {const startValue=document.querySelector("#periodStart")?.value,endValue=document.querySelector("#periodEnd")?.value;label=startValue&&endValue?`${startValue.replaceAll("-","/")}～${endValue.replaceAll("-","/")}`:"カスタマイズ";}
   custom.hidden=select.value!=="custom"; chip.textContent=`期間：${label}`;
+}
+
+function selectedDateRange() {
+  const value=document.querySelector("#periodSelect")?.value;
+  if(value==="yesterday") return "lastDay";
+  if(value==="7") return "last7Day";
+  if(value==="30") return "last30Day";
+  const start=document.querySelector("#periodStart")?.value,end=document.querySelector("#periodEnd")?.value;
+  if(!start||!end) throw new Error("開始日と終了日を指定してください");
+  return `${start}~${end}`;
+}
+
+async function refreshFromApi() {
+  if(!apiIsConfigured()) { window.alert("API中継URLがまだ設定されていません"); return; }
+  elements.apiRefresh.disabled=true; elements.apiRefresh.classList.add("loading");
+  if(elements.status) elements.status.innerHTML="<span></span> API LOADING";
+  try {
+    products=await fetchProductRanking({dateRange:selectedDateRange(),pageSize:100,keyword:elements.search.value.trim()});
+    currentPage=1; elements.category.value="all"; populateCategories(); render();
+    if(elements.status) elements.status.innerHTML=`<span></span> KALODATA API · ${products.length} ITEMS`;
+  } catch(error) {
+    if(elements.status) elements.status.innerHTML="<span></span> API ERROR";
+    window.alert(error.message);
+  } finally { elements.apiRefresh.disabled=false; elements.apiRefresh.classList.remove("loading"); }
 }
 
 function paginationItems(totalPages) {
@@ -130,6 +155,8 @@ document.querySelector("#toggleFilters")?.addEventListener("click",event=>{
     const collapsed=document.querySelector("main")?.classList.toggle("filters-collapsed"); event.currentTarget.setAttribute("aria-expanded",String(!collapsed));
   }
 });
-document.querySelector("#periodSelect")?.addEventListener("change",updatePeriod);
-document.querySelectorAll("#periodStart,#periodEnd").forEach(input=>input.addEventListener("change",updatePeriod));
-populateCategories(); updatePeriod(); render();
+document.querySelector("#periodSelect")?.addEventListener("change",()=>{updatePeriod();if(apiIsConfigured()&&document.querySelector("#periodSelect").value!=="custom")refreshFromApi();});
+document.querySelectorAll("#periodStart,#periodEnd").forEach(input=>input.addEventListener("change",()=>{updatePeriod();if(apiIsConfigured()&&document.querySelector("#periodStart").value&&document.querySelector("#periodEnd").value)refreshFromApi();}));
+elements.apiRefresh?.addEventListener("click",refreshFromApi);
+if(elements.apiRefresh&&!apiIsConfigured()) elements.apiRefresh.hidden=true;
+populateCategories(); updatePeriod(); render(); if(apiIsConfigured()) refreshFromApi();

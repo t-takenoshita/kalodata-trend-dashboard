@@ -33,3 +33,16 @@ export function adaptKalodataRows(rows) {
     };
   }));
 }
+
+export function adaptKalodataApiProducts(rows) {
+  return scoreProducts(rows.map((row, index) => ({
+    id: String(row.product_id || `api-${index + 1}`), name: row.product_name || "名称未設定",
+    subtitle: row.seller_name || "KaloData API", category: "API商品", fullCategory: "API商品",
+    imageUrl: row.master_image_url || "", price: asNumber(row.unit_price), shipping: null,
+    sales: asNumber(row.sales_volumn), gmv: asNumber(row.revenue), rating: null,
+    growth: growthValue(row.revenue_growth_rate), growthLabel: `${asNumber(row.revenue_growth_rate)}%`,
+    liveGmv: asNumber(row.live_revenue), videoGmv: asNumber(row.video_revenue), cardGmv: asNumber(row.showcase_revenue),
+    commissionRate: asNumber(row.commission_rate), sellerId: row.seller_id || "", launchDate: row.launch_date || "",
+    icon: "↗", color: ["#dff7e8","#e5f1ff","#ffe6e4","#f0e8ff","#fff0d8"][index % 5],
+  })));
+}
