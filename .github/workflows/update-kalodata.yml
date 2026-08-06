@@ -25,7 +25,7 @@ jobs:
           node-version: 22
       - name: KaloData APIから取得
         env:
-          KALODATA_SECRET_KEY: ${{ secrets.KALODATA_API }}
+          KALODATA_SECRET_KEY: ${{ secrets.KALODATA_SECRET_KEY }}
           CUSTOM_DATE_RANGE: ${{ inputs.custom_date_range }}
         run: node scripts/fetch-kalodata.mjs
       - name: 更新結果を保存
