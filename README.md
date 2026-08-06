@@ -15,7 +15,7 @@ TikTok Shop Japanの商品トレンドを探索する、静的な分析ダッシ
 
 ## KaloData API接続
 
-GitHubのリポジトリで **Settings → Secrets and variables → Actions** を開き、Repository secretとして`KALODATA_SECRET_KEY`を登録します。次に **Actions → KaloDataの商品データを更新 → Run workflow** を実行すると、「昨日・過去7日・過去30日」の商品データが`data/`へ保存されます。任意期間も必要な場合は実行時に`yyyy-MM-dd~yyyy-MM-dd`を入力します。
+GitHubのリポジトリで **Settings → Secrets and variables → Actions** を開き、Repository secretとして`KALODATA_API`を登録します。次に **Actions → KaloDataの商品データを更新 → Run workflow** を実行すると、「昨日・過去7日・過去30日」の商品データが`data/`へ保存されます。任意期間も必要な場合は実行時に`yyyy-MM-dd~yyyy-MM-dd`を入力します。
 
 サイトの期間変更は、最後にActionsで取得した各期間のJSONを切り替えます。APIキーは公開されませんが、取得結果のJSONは公開されます。リアルタイム取得へ戻す場合に備え、Cloudflare Worker版も`worker/`へ残しています。
 
